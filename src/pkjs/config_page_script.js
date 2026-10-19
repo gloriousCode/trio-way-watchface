@@ -1,5 +1,8 @@
+const { renderWatchPreview } = require("./config_preview");
+
 function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialConfig) {
   return `<script>
+      var renderWatchPreview = ${renderWatchPreview.toString()};
       var presets = ${presetJson};
       var groupedPalette = ${paletteJson};
       var groupOrder = ${groupOrderJson};
@@ -439,6 +442,12 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
       syncHandControls();
       syncSwatches();
       syncPresetPreview();
+      ["previewShape", "faceMode", "preset", "twelveHour", "showHands", "showTexture", "showDateTiles", "showDateComplication",
+       "bgColour", "hourColour", "minuteColour", "hourHandColour", "minuteHandColour",
+       "complicationBgColour", "complicationBorderColour", "complicationTextColour"].forEach(function(id) {
+        document.getElementById(id).addEventListener("change", renderWatchPreview);
+      });
+      renderWatchPreview();
     </script>`;
 }
 

@@ -11,6 +11,11 @@ const CONFIG_PAGE_STYLES = `
   .eyebrow { font-size: 12px; font-weight: 750; letter-spacing: 2px; margin: 0; }
   section { padding: 20px; margin-bottom: 16px; background: #fafaf7;
     border: 1px solid #d8d8d0; border-radius: 16px; }
+  .watch-preview { text-align: center; }
+  #watchPreview { display: block; width: 200px; max-width: 100%; height: auto; margin: 0 auto 18px;
+    background: #111; border: 6px solid #252622; border-radius: 10px; }
+  .watch-preview label { font-size: 14px; }
+  .watch-preview .help { margin: 12px 0 0; }
   .row { margin-bottom: 20px; }
   .row:last-child { margin-bottom: 0; }
   label { display: block; margin-bottom: 6px; font-weight: 600; }

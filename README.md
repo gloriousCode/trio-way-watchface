@@ -4,6 +4,8 @@ TrioWay is a three-colour Pebble watchface with plain analogue, numbered analogu
 
 It focuses on clean geometry, readable time, and calm muted palettes rather than feature-heavy complication stacks.
 
+The phone configuration includes a live graphical preview for all five layouts. Colours, hands, date and texture update as you edit, with rectangular and round display previews. It uses an illustrative 13:37 sample; watch fonts, texture and positioning may differ. Preview display selection does not change watch settings.
+
 ## Layouts
 
 - **Analogue:** the original hands and three colour sectors.

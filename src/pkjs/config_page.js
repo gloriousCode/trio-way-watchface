@@ -27,6 +27,12 @@ function buildConfigDataUrl(config, palette) {
     <main>
     <header><p class="eyebrow">TRIOWAY</p><h1>Make it yours</h1>
     <p>Choose a layout and colour preset, then fine-tune the details.</p></header>
+    <section class="watch-preview" aria-label="Watch preview">
+      <svg id="watchPreview" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 228" role="img" aria-label="Illustrative watch preview"></svg>
+      <label for="previewShape">Preview display</label>
+      <select id="previewShape"><option value="rectangle">Pebble Time 2 · Rectangular</option><option value="round">Pebble Round 2 · Round</option></select>
+      <p class="help">Updates as you edit. Illustrative preview at 13:37 — watch fonts, texture and positioning may differ.</p>
+    </section>
     <section aria-labelledby="layoutHeading"><h2 id="layoutHeading">Time &amp; layout</h2>
     <div class="row">
       <label for="faceMode">Face mode</label>

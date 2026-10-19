@@ -14,6 +14,8 @@ function openPage(overrides = {}, returnTo = '') {
   function element(tagName) {
     const listeners = new Map();
     return {
+      attributes: {},
+      setAttribute(name, value) { this.attributes[name] = value; },
       tagName, value: '', checked: false, disabled: false, style: {}, options: [], children: [],
       appendChild(child) {
         this.children.push(child);
@@ -292,4 +294,57 @@ test('preset labels reflect all eight colours, including custom hands and date c
     assert.equal(page.get('preset').value, 'classic');
   }
   assert.equal(openPage({ ...PRESETS.classic, hourHandColour: '#55aaff' }).get('preset').value, '');
+});
+
+test('graphical preview responds to layouts, clock format, colours and display shape without sending settings', () => {
+  const page = openPage({ faceMode: 'hands', showHands: false, showDateTiles: false, showDateComplication: false });
+  const preview = page.get('watchPreview');
+  const plain = preview.innerHTML;
+  assert.match(plain, /A350 350/);
+  page.change('showHands', true);
+  assert.notEqual(preview.innerHTML, plain);
+  page.change('faceMode', 'numbered');
+  assert.match(preview.innerHTML, />12<\/text>/);
+  page.change('faceMode', 'ticks');
+  assert.doesNotMatch(preview.innerHTML, />12<\/text>/);
+  assert.match(preview.innerHTML, /stroke="#ffffff"/);
+  for (const mode of ['digital', 'largedigital']) {
+    page.change('faceMode', mode);
+    page.change('twelveHour', false);
+    assert.match(preview.innerHTML, />13<\/text>/);
+    page.change('twelveHour', true);
+    assert.match(preview.innerHTML, />01<\/text>/);
+    assert.match(preview.innerHTML, />37<\/text>/);
+  }
+  page.change('preset', 'classic');
+  const preset = preview.innerHTML;
+  page.change('hourHandColour', '#55aaff');
+  assert.notEqual(preview.innerHTML, preset);
+  assert.match(preview.innerHTML, /fill="#55aaff"/);
+  page.change('previewShape', 'round');
+  assert.equal(preview.attributes.viewBox, '0 0 200 200');
+  assert.equal(preview.style.borderRadius, '50%');
+  page.change('previewShape', 'rectangle');
+  assert.equal(preview.attributes.viewBox, '0 0 200 228');
+  assert.equal(page.document.location, '');
+  assert.deepEqual(page.callbacks, []);
+});
+
+test('preview reflects date visibility and texture after dependent controls settle', () => {
+  const page = openPage({ faceMode: 'hands', showDateTiles: true, showDateComplication: false });
+  const preview = page.get('watchPreview');
+  assert.match(preview.innerHTML, />Mon 19<\/text>/);
+  page.change('faceMode', 'largedigital');
+  assert.doesNotMatch(preview.innerHTML, />Mon 19<\/text>/);
+  assert.doesNotMatch(preview.innerHTML, />19<\/text>/);
+  page.change('showDateComplication', true);
+  assert.match(preview.innerHTML, />19<\/text>/);
+  page.change('complicationTextColour', '#55aaff');
+  assert.match(preview.innerHTML, /fill="#55aaff">19/);
+  page.change('showTexture', true);
+  assert.match(preview.innerHTML, /fill="url\(#previewGrain\)"/);
+  page.change('showTexture', false);
+  assert.doesNotMatch(preview.innerHTML, /fill="url\(#previewGrain\)"/);
+  page.change('faceMode', 'hands');
+  assert.match(preview.innerHTML, />Mon 19<\/text>/);
 });
