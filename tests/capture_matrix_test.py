@@ -54,6 +54,8 @@ class CaptureMatrixTest(unittest.TestCase):
             ["emery", "--port", "-1"],
             ["emery", "--port", "65536"],
             ["emery", "--output", str(ROOT.parent / "outside-checkout")],
+            ["emery", "--output", str(ROOT / "mockups/current")],
+            ["emery", "--output", str(capture.ASSET_ROOT / "../outside-archive")],
         )
         for argv in arguments:
             with self.subTest(argv=argv), ExitStack() as stack:
@@ -85,7 +87,7 @@ class CaptureMatrixTest(unittest.TestCase):
                             ("pebble", "build"),
                             ("pebble", "install", "--qemu", host, "build/time-2-design.pbw"),
                             ("pebble", "screenshot", "--qemu", host, "--no-open",
-                             str(ROOT / "mockups/current" / f"{platform}-{mode}-{hour:02d}{minute:02d}.png")),
+                             str(capture.ASSET_ROOT / "mockups/current" / f"{platform}-{mode}-{hour:02d}{minute:02d}.png")),
                         ])
                         source = commands[offset][1]
                         self.assertIn(f"state->mode = {constant};", source)

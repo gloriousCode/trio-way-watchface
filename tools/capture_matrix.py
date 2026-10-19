@@ -16,6 +16,7 @@ import time
 
 
 ROOT = Path(__file__).resolve().parents[1]
+ASSET_ROOT = ROOT.parent / (ROOT.name + "-assets")
 DEBUG = ROOT / "src/c/mdbl_debug.c"
 MODES = {"analogue": "FACE_MODE_HANDS", "hybrid": "FACE_MODE_DIGITAL",
          "large": "FACE_MODE_LARGE_DIGITAL", "numbered": "FACE_MODE_NUMBERED", "ticks": "FACE_MODE_TICKS"}
@@ -50,7 +51,8 @@ def main(argv=None):
     parser.add_argument("platform", choices=("emery", "gabbro"))
     parser.add_argument("--port", type=int, help="Defaults to 12344 for Emery, 12345 for Gabbro")
     parser.add_argument("--modes", default="analogue,numbered,ticks,hybrid,large")
-    parser.add_argument("--output", type=Path, default=ROOT / "mockups/current")
+    parser.add_argument("--output", type=Path, default=ASSET_ROOT / "mockups/current",
+                        help="Destination inside the sibling time-2-design-assets archive")
     parser.add_argument("--preset", help="Preset key from constants.js")
     texture = parser.add_mutually_exclusive_group()
     texture.add_argument("--texture", action="store_true", help="Enable the production texture setting")
@@ -68,8 +70,8 @@ def main(argv=None):
         parser.error("Unsupported mode; choose from analogue,numbered,ticks,hybrid,large")
     host = f"localhost:{args.port or (12344 if args.platform == 'emery' else 12345)}"
     output = args.output.resolve()
-    if not output.is_relative_to(ROOT):
-        parser.error("Capture output must be inside this checkout")
+    if not output.is_relative_to(ASSET_ROOT.resolve()) or output.is_relative_to(ROOT):
+        parser.error("Capture output must be inside the sibling asset archive, outside this checkout")
     args.colours = None
     if args.preset:
         result = subprocess.run(["node", "-e", "process.stdout.write(JSON.stringify(require('./src/pkjs/constants').PRESETS))"],

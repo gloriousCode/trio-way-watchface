@@ -15,7 +15,7 @@ const cards = entries => entries.map(([key, preset]) => `
 </figure>`).join('\n');
 
 const entries = Object.entries(PRESETS);
-const output = path.join(root, 'mockups/presets');
+const output = path.join(path.dirname(root), path.basename(root) + '-assets', 'mockups/presets');
 fs.mkdirSync(output, { recursive: true });
 fs.writeFileSync(path.join(output, 'index.html'), `<!doctype html>
 <html lang="en-AU">
@@ -67,4 +67,4 @@ document.querySelectorAll('[data-platform]').forEach(button => button.addEventLi
 }));
 </script>
 </html>`);
-console.log('Generated mockups/presets/index.html');
+console.log(`Generated ${path.join(output, 'index.html')}`);

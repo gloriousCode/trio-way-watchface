@@ -60,7 +60,7 @@ python3 tools/capture_matrix.py emery
 python3 tools/emulator.py stop emery
 ```
 
-Use `gabbro` and port `12345` for the round watch. Captures go to `mockups/current/`; `--times 1337,2359 --modes hybrid,large` selects a shorter run. For a stalled test emulator, explicitly run `python3 tools/emulator.py reset emery`, then `start emery` and retry one install. Reset leaves it stopped and preserves its previous flash. Diagnostics are `emulator.log` and `serial.log` in `build/emulator/<platform>/`. Avoid overlapping install commands or repeatedly retrying a timed-out transfer. No global `pebble kill` or `pebble wipe` is needed.
+Use `gabbro` and port `12345` for the round watch. Captures go to `../time-2-design-assets/mockups/current/`; `--times 1337,2359 --modes hybrid,large` selects a shorter run. For a stalled test emulator, explicitly run `python3 tools/emulator.py reset emery`, then `start emery` and retry one install. Reset leaves it stopped and preserves its previous flash. Diagnostics are `emulator.log` and `serial.log` in `build/emulator/<platform>/`. Avoid overlapping install commands or repeatedly retrying a timed-out transfer. No global `pebble kill` or `pebble wipe` is needed.
 
 For later tool updates, use `uv tool upgrade pebble-tool`, `pebble sdk install latest`, and `pebble sdk activate <installed-version>`. Reset test flash before switching firmware versions. Override `PEBBLE_SDK_ROOT` for the helper/build fallback when using a nonstandard SDK location.
 
@@ -83,22 +83,29 @@ I designed TrioWay because most digital watchfaces felt either busy or plain.
 
 I wanted something that still felt like a proper watch at a glance: balanced, attractive, and easy to read. I also wanted the colour combinations to feel intentional and usable day-to-day, not loud for the sake of being loud.
 
-## Preview (current emulator captures)
+## Screenshot and store archives
 
-[Browse all thirteen revised presets on Time 2 and Round 2 and the flat/texture comparison](mockups/presets/index.html). These are native-resolution emulator captures.
+Screenshots, preview galleries and store banners live outside this repository in the
+sibling `../time-2-design-assets/` directory. Keeping generated assets separate keeps
+the source project below CloudPebble's 400-file import limit. Required watchface
+images and fonts remain in `resources/`.
 
-### Pebble Time 2 (`emery`)
+The archive preserves the existing directory structure:
 
-![Analogue at 13:37 (Emery)](mockups/current/emery-analogue-1337.png)
-![Numbered Analogue at 13:37 (Emery)](mockups/current/emery-numbered-1337.png)
-![Marked Analogue at 13:37 (Emery)](mockups/current/emery-ticks-1337.png)
-![Hybrid at 13:37 (Emery)](mockups/current/emery-hybrid-1337.png)
-![Large Digital at 13:37 (Emery)](mockups/current/emery-large-1337.png)
+- `mockups/presets/index.html`: all thirteen presets on Time 2 and Round 2, including flat/texture comparisons.
+- `mockups/current/`: native-resolution captures of all five face layouts.
+- `store-assets/2026-10-19/index.html`: store screenshot and banner gallery.
+- `store-assets/2026-10-19/trioway-store-assets.zip`: the upload package.
 
-### Pebble Round 2 (`gabbro`)
+`tools/capture_matrix.py` saves into this sibling archive by default; custom
+`--output` paths must also be inside the archive. `tools/capture_store.py` writes
+its store set there, and `node tools/build_palette_gallery.js` regenerates the
+palette gallery there. These tools still read and build sources in this checkout.
+The archive is local and is not included in a fresh Git clone; retain a separate
+backup of finished marketing assets. Old preview-generation scripts are retained
+in the archive for reference; use the maintained tools in `tools/` for new captures.
 
-![Analogue at 13:37 (Gabbro)](mockups/current/gabbro-analogue-1337.png)
-![Numbered Analogue at 13:37 (Gabbro)](mockups/current/gabbro-numbered-1337.png)
-![Marked Analogue at 13:37 (Gabbro)](mockups/current/gabbro-ticks-1337.png)
-![Hybrid at 13:37 (Gabbro)](mockups/current/gabbro-hybrid-1337.png)
-![Large Digital at 13:37 (Gabbro)](mockups/current/gabbro-large-1337.png)
+The old repository paths are ignored to prevent accidentally adding screenshots
+again. When applying this cleanup to an existing clone, commit the tracked asset
+removals as well as these tool changes: ignore rules alone do not remove files
+already tracked by Git.

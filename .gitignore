@@ -1,6 +1,11 @@
 # macOS
 .DS_Store
 
+# Screenshot and marketing archives live in the sibling time-2-design-assets folder.
+/mockups/
+/store-assets/
+__pycache__/
+
 # Pebble build artefacts
 build/
 .lock-waf_darwin_build

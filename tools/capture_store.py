@@ -9,7 +9,7 @@ import capture_matrix
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "store-assets/2026-10-19"
+OUTPUT = capture_matrix.ASSET_ROOT / "store-assets/2026-10-19"
 RECIPES = (
     ("01-analogue-classic-gold", "analogue", "classic", "1009", False),
     ("02-numerals-porcelain-blue", "numbered", "porcelain", "1009", False),
@@ -39,7 +39,7 @@ def main():
             entries.append({"file": str(final.relative_to(OUTPUT)), "platform": platform,
                             "size": dimensions, "mode": mode, "preset": preset,
                             "time": time[:2] + ":" + time[2:], "texture": texture})
-            print(f"Saved {final.relative_to(ROOT)}", flush=True)
+            print(f"Saved {final}", flush=True)
     manifest = {"title": "TrioWay", "created_utc": datetime.now(timezone.utc).isoformat(),
                 "listing": "https://apps.repebble.com/082418be8cd642a9b06da3ac",
                 "requirements": "https://developer.repebble.com/guides/appstore-publishing/preparing-a-submission/",
