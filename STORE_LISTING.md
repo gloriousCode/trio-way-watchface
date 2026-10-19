@@ -20,7 +20,12 @@ Features:
 - Optional subtle texture, off by default
 - Full colour customisation for sectors, hands, and complications
 
-## What's New in 1.3.1
+## What's New in 1.3.2
+
+- Added a live graphical configuration preview for all five layouts
+- Preview colours, hands, dates and texture as you edit, with rectangular and round display options
+
+## Previous Update: 1.3.1
 
 - Added a 12-hour time option for Hybrid and Digital Large; 24-hour time remains the default
 - The clock preference is saved across watchface restarts
