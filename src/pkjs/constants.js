@@ -3,310 +3,174 @@ const STORAGE_KEY = "emery-colour-hands-config";
 const FACE_MODES = {
   HANDS: "hands",
   DIGITAL: "digital",
-  LARGE_DIGITAL: "largedigital"
+  LARGE_DIGITAL: "largedigital",
+  NUMBERED: "numbered",
+  TICKS: "ticks"
+};
+
+// Explicit palettes keep the large sectors quiet and reserve colour for detail.
+// Saved configurations store colours, so replacing preset names preserves them.
+const PRESETS = {
+  classic: {
+    label: "Classic · Gold",
+    bgColour: "#555555",
+    hourColour: "#000000",
+    minuteColour: "#aaaaaa",
+    hourHandColour: "#ffffff",
+    minuteHandColour: "#ffaa55",
+    complicationBgColour: "#000000",
+    complicationBorderColour: "#aaaaaa",
+    complicationTextColour: "#ffffff"
+  },
+  graphite: {
+    label: "Graphite",
+    bgColour: "#000000",
+    hourColour: "#555555",
+    minuteColour: "#aaaaaa",
+    hourHandColour: "#ffffff",
+    minuteHandColour: "#aaaaaa",
+    complicationBgColour: "#000000",
+    complicationBorderColour: "#aaaaaa",
+    complicationTextColour: "#ffffff"
+  },
+  silver: {
+    label: "Silver",
+    bgColour: "#aaaaaa",
+    hourColour: "#555555",
+    minuteColour: "#ffffff",
+    hourHandColour: "#000000",
+    minuteHandColour: "#555555",
+    complicationBgColour: "#ffffff",
+    complicationBorderColour: "#555555",
+    complicationTextColour: "#000000"
+  },
+  paper: {
+    label: "Paper",
+    bgColour: "#ffffff",
+    hourColour: "#aaaaaa",
+    minuteColour: "#555555",
+    hourHandColour: "#000000",
+    minuteHandColour: "#555555",
+    complicationBgColour: "#ffffff",
+    complicationBorderColour: "#000000",
+    complicationTextColour: "#000000"
+  },
+  inkBlue: {
+    label: "Ink · Blue",
+    bgColour: "#555555",
+    hourColour: "#000000",
+    minuteColour: "#ffffff",
+    hourHandColour: "#ffffff",
+    minuteHandColour: "#55aaff",
+    complicationBgColour: "#000000",
+    complicationBorderColour: "#aaaaaa",
+    complicationTextColour: "#ffffff"
+  },
+  warmStone: {
+    label: "Stone · Gold",
+    bgColour: "#aaaaaa",
+    hourColour: "#000000",
+    minuteColour: "#555555",
+    hourHandColour: "#ffffff",
+    minuteHandColour: "#ffaa55",
+    complicationBgColour: "#000000",
+    complicationBorderColour: "#aaaaaa",
+    complicationTextColour: "#ffffff"
+  },
+  porcelain: {
+    label: "Porcelain · Blue",
+    bgColour: "#ffffff",
+    hourColour: "#555555",
+    minuteColour: "#aaaaaa",
+    hourHandColour: "#000000",
+    minuteHandColour: "#0055aa",
+    complicationBgColour: "#ffffff",
+    complicationBorderColour: "#555555",
+    complicationTextColour: "#000000"
+  },
+  navy: {
+    label: "Tonal · Navy",
+    bgColour: "#000055",
+    hourColour: "#5555aa",
+    minuteColour: "#aaaaff",
+    hourHandColour: "#ffffff",
+    minuteHandColour: "#aaaaff",
+    complicationBgColour: "#000000",
+    complicationBorderColour: "#aaaaaa",
+    complicationTextColour: "#ffffff"
+  },
+  forest: {
+    label: "Tonal · Forest",
+    bgColour: "#005500",
+    hourColour: "#55aa55",
+    minuteColour: "#aaffaa",
+    hourHandColour: "#ffffff",
+    minuteHandColour: "#aaffaa",
+    complicationBgColour: "#000000",
+    complicationBorderColour: "#aaaaaa",
+    complicationTextColour: "#ffffff"
+  },
+  burgundy: {
+    label: "Tonal · Burgundy",
+    bgColour: "#550000",
+    hourColour: "#aa5555",
+    minuteColour: "#ffaaaa",
+    hourHandColour: "#ffffff",
+    minuteHandColour: "#ffaaaa",
+    complicationBgColour: "#000000",
+    complicationBorderColour: "#aaaaaa",
+    complicationTextColour: "#ffffff"
+  },
+  dusk: {
+    label: "Dusk · Mauve & Gold",
+    bgColour: "#000055",
+    hourColour: "#555555",
+    minuteColour: "#aa55aa",
+    hourHandColour: "#ffffff",
+    minuteHandColour: "#ffaa55",
+    complicationBgColour: "#000000",
+    complicationBorderColour: "#aaaaaa",
+    complicationTextColour: "#ffffff"
+  },
+  lagoon: {
+    label: "Lagoon · Seafoam",
+    bgColour: "#005555",
+    hourColour: "#000055",
+    minuteColour: "#55aaaa",
+    hourHandColour: "#ffffff",
+    minuteHandColour: "#ffffaa",
+    complicationBgColour: "#000000",
+    complicationBorderColour: "#aaaaaa",
+    complicationTextColour: "#ffffff"
+  },
+  ember: {
+    label: "Ember · Sand",
+    bgColour: "#550000",
+    hourColour: "#555555",
+    minuteColour: "#ffaa55",
+    hourHandColour: "#ffffff",
+    minuteHandColour: "#ffaaaa",
+    complicationBgColour: "#000000",
+    complicationBorderColour: "#aaaaaa",
+    complicationTextColour: "#ffffff"
+  }
 };
 
 const defaults = {
-  bgColour: "#aaffaa",
-  hourColour: "#55aa55",
-  minuteColour: "#555555",
-  hourHandColour: "#5555aa",
-  minuteHandColour: "#aa5500",
-  complicationBgColour: "#ffffff",
-  complicationBorderColour: "#55aa55",
-  complicationTextColour: "#555555",
+  bgColour: PRESETS.classic.bgColour,
+  hourColour: PRESETS.classic.hourColour,
+  minuteColour: PRESETS.classic.minuteColour,
+  hourHandColour: PRESETS.classic.hourHandColour,
+  minuteHandColour: PRESETS.classic.minuteHandColour,
+  complicationBgColour: PRESETS.classic.complicationBgColour,
+  complicationBorderColour: PRESETS.classic.complicationBorderColour,
+  complicationTextColour: PRESETS.classic.complicationTextColour,
   showHands: true,
+  showTexture: false,
   showDateComplication: true,
   faceMode: FACE_MODES.HANDS,
   showDateTiles: false
 };
-
-const PRESETS_BASE = {
-  sunsetPetal: {
-    label: "Sunset Petal",
-    bgColour: "#ffaa55",
-    hourColour: "#ff5555",
-    minuteColour: "#aa55aa"
-  },
-  canyonShell: {
-    label: "Canyon Shell",
-    bgColour: "#ff5555",
-    hourColour: "#aa5500",
-    minuteColour: "#ffaaaa"
-  },
-  coastalDust: {
-    label: "Coastal Dust",
-    bgColour: "#00aaaa",
-    hourColour: "#aaaaff",
-    minuteColour: "#aa55aa"
-  },
-  mangoCream: {
-    label: "Mango Cream",
-    bgColour: "#ffaaaa",
-    hourColour: "#ffaa00",
-    minuteColour: "#ffffaa"
-  },
-  tealSage: {
-    label: "Teal Sage",
-    bgColour: "#00aaaa",
-    hourColour: "#0055aa",
-    minuteColour: "#aaffaa"
-  },
-  indigoOrchid: {
-    label: "Indigo Orchid",
-    bgColour: "#5555aa",
-    hourColour: "#55aaff",
-    minuteColour: "#aa55aa"
-  },
-  violetFloss: {
-    label: "Violet Floss",
-    bgColour: "#aa55ff",
-    hourColour: "#ff55aa",
-    minuteColour: "#ff00aa"
-  },
-  stonePeach: {
-    label: "Stone Peach",
-    bgColour: "#aaaaaa",
-    hourColour: "#555555",
-    minuteColour: "#ffaaaa"
-  },
-  mistCoralSlate: {
-    label: "Mist Coral Slate",
-    bgColour: "#aaffff",
-    hourColour: "#ffaaaa",
-    minuteColour: "#5555aa"
-  },
-  aquaLemonMint: {
-    label: "Aqua Lemon Mint",
-    bgColour: "#00aaaa",
-    hourColour: "#ffff55",
-    minuteColour: "#aaffaa"
-  },
-  mintAmberSand: {
-    label: "Mint Amber Sand",
-    bgColour: "#55ffaa",
-    hourColour: "#ffaa00",
-    minuteColour: "#ffffaa"
-  },
-  roseApricotShell: {
-    label: "Rose Apricot Shell",
-    bgColour: "#ff55aa",
-    hourColour: "#ff5555",
-    minuteColour: "#ffaaaa"
-  },
-  coralOliveShell: {
-    label: "Coral Olive Shell",
-    bgColour: "#ff5555",
-    hourColour: "#aaaa55",
-    minuteColour: "#ffaaaa"
-  },
-  fogSlate: {
-    label: "Fog Slate",
-    bgColour: "#aaaaaa",
-    hourColour: "#555555",
-    minuteColour: "#5555aa"
-  },
-  sageStone: {
-    label: "Sage Stone",
-    bgColour: "#aaffaa",
-    hourColour: "#55aa55",
-    minuteColour: "#555555"
-  },
-  coastalInk: {
-    label: "Coastal Ink",
-    bgColour: "#aaffff",
-    hourColour: "#5555aa",
-    minuteColour: "#005555"
-  },
-  sandGraphite: {
-    label: "Sand Graphite",
-    bgColour: "#ffffaa",
-    hourColour: "#aaaa55",
-    minuteColour: "#555555"
-  },
-  dustPlum: {
-    label: "Dust Plum",
-    bgColour: "#aa55aa",
-    hourColour: "#555555",
-    minuteColour: "#5555aa"
-  }
-};
-
-const EXTENSION_COLOUR_POOL = [
-  "#000000",
-  "#ffffff",
-  "#0055aa",
-  "#00aaaa",
-  "#55aaff",
-  "#55ffaa",
-  "#55ff55",
-  "#aaff55",
-  "#ffff55",
-  "#ffaa00",
-  "#ff5555",
-  "#ff55aa",
-  "#aa55aa",
-  "#5555aa",
-  "#aaaaaa",
-  "#555555",
-  "#aa5500",
-  "#00aa55",
-  "#aa0000",
-  "#005555"
-];
-
-function hashString(text) {
-  let hash = 0;
-
-  for (let i = 0; i < text.length; i += 1) {
-    hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
-  }
-
-  return hash;
-}
-
-function parseHexChannel(hex, start) {
-  return parseInt(hex.slice(start, start + 2), 16);
-}
-
-function hexToRgb(hex) {
-  return [
-    parseHexChannel(hex, 1),
-    parseHexChannel(hex, 3),
-    parseHexChannel(hex, 5)
-  ];
-}
-
-function toLinearChannel(channel) {
-  const srgb = channel / 255;
-  return srgb <= 0.03928 ? srgb / 12.92 : Math.pow((srgb + 0.055) / 1.055, 2.4);
-}
-
-function relativeLuminance(hex) {
-  const [r, g, b] = hexToRgb(hex);
-  const rl = toLinearChannel(r);
-  const gl = toLinearChannel(g);
-  const bl = toLinearChannel(b);
-  return (0.2126 * rl) + (0.7152 * gl) + (0.0722 * bl);
-}
-
-function contrastRatio(a, b) {
-  const aLum = relativeLuminance(a);
-  const bLum = relativeLuminance(b);
-  const light = Math.max(aLum, bLum);
-  const dark = Math.min(aLum, bLum);
-  return (light + 0.05) / (dark + 0.05);
-}
-
-function minContrastAgainst(colour, others) {
-  let min = Number.POSITIVE_INFINITY;
-
-  for (let i = 0; i < others.length; i += 1) {
-    min = Math.min(min, contrastRatio(colour, others[i]));
-  }
-
-  return min;
-}
-
-function pickDistinctColour(used, offset) {
-  for (let i = 0; i < EXTENSION_COLOUR_POOL.length; i += 1) {
-    const colour = EXTENSION_COLOUR_POOL[(offset + i) % EXTENSION_COLOUR_POOL.length];
-
-    if (!used.has(colour)) {
-      used.add(colour);
-      return colour;
-    }
-  }
-
-  return "#000000";
-}
-
-function pickDistinctColourByScore(used, scoreFn, fallback) {
-  let bestColour = null;
-  let bestScore = Number.NEGATIVE_INFINITY;
-
-  for (let i = 0; i < EXTENSION_COLOUR_POOL.length; i += 1) {
-    const colour = EXTENSION_COLOUR_POOL[i];
-
-    if (used.has(colour)) {
-      continue;
-    }
-
-    const score = scoreFn(colour);
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestColour = colour;
-    }
-  }
-
-  if (!bestColour) {
-    return fallback;
-  }
-
-  used.add(bestColour);
-  return bestColour;
-}
-
-function pickBestContrastColour(candidates, background, fallback, excluded) {
-  let best = null;
-  let bestScore = Number.NEGATIVE_INFINITY;
-  const excludeSet = excluded || new Set();
-
-  for (let i = 0; i < candidates.length; i += 1) {
-    const colour = candidates[i];
-
-    if (!colour || excludeSet.has(colour) || colour === background) {
-      continue;
-    }
-
-    const score = contrastRatio(colour, background);
-    if (score > bestScore) {
-      bestScore = score;
-      best = colour;
-    }
-  }
-
-  return best || fallback;
-}
-
-function extendPreset(key, preset) {
-  const used = new Set([preset.bgColour, preset.hourColour, preset.minuteColour]);
-  const seed = hashString(key);
-  const baseColours = [preset.bgColour, preset.hourColour, preset.minuteColour];
-  const complicationBgColour = "#ffffff";
-
-  const hourHandColour = pickDistinctColour(used, seed % EXTENSION_COLOUR_POOL.length);
-  const minuteHandColour = pickDistinctColour(used, (seed + 3) % EXTENSION_COLOUR_POOL.length);
-  const complicationTextColour = pickBestContrastColour(
-    [preset.minuteColour, preset.hourColour, preset.bgColour],
-    complicationBgColour,
-    preset.minuteColour
-  );
-  const complicationBorderColour = pickBestContrastColour(
-    [preset.hourColour, preset.bgColour, preset.minuteColour],
-    complicationBgColour,
-    preset.hourColour,
-    new Set([complicationTextColour])
-  );
-
-  return {
-    label: preset.label,
-    bgColour: preset.bgColour,
-    hourColour: preset.hourColour,
-    minuteColour: preset.minuteColour,
-    hourHandColour,
-    minuteHandColour,
-    complicationBgColour,
-    complicationBorderColour,
-    complicationTextColour
-  };
-}
-
-const PRESETS = Object.keys(PRESETS_BASE).reduce(function(acc, key) {
-  acc[key] = extendPreset(key, PRESETS_BASE[key]);
-  return acc;
-}, {});
 
 const GROUP_ORDER = [
   "Neutrals",

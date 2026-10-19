@@ -2,15 +2,18 @@
 
 #include <pebble.h>
 
-#define SECTOR_STROKE 3
-#define SECTOR_STEP_ANGLE (TRIG_MAX_ANGLE / 360) /* 1 degree */
-#define HOUR_HAND_STROKE 6
-#define MINUTE_HAND_STROKE 6
+#define SECTOR_STROKE 2
+#define HOUR_HAND_STROKE 5
+#define MINUTE_HAND_STROKE 4
+#define HOUR_HAND_LENGTH_PERCENT 24
+#define MINUTE_HAND_LENGTH_PERCENT 42
 
 typedef enum FaceMode {
   FACE_MODE_HANDS = 0,
   FACE_MODE_DIGITAL,
-  FACE_MODE_LARGE_DIGITAL
+  FACE_MODE_LARGE_DIGITAL,
+  FACE_MODE_NUMBERED,
+  FACE_MODE_TICKS
 } FaceMode;
 
 typedef struct SectorRay {
@@ -39,6 +42,7 @@ typedef struct AppState {
   GColor complication_border_colour;
   GColor complication_text_colour;
   bool show_hands;
+  bool show_texture;
   bool show_date_complication;
   struct tm now;
   GRect cached_bounds;
@@ -49,12 +53,6 @@ typedef struct AppState {
 } AppState;
 
 extern AppState s_state;
-extern AppTimer *s_redraw_timer;
-extern GFont s_date_font;
-extern GFont s_day_font;
-extern GFont s_large_digital_font;
-extern int16_t s_date_font_height;
-extern int16_t s_day_font_height;
 
 void update_now(void);
 void apply_debug_state(AppState *state);
@@ -71,6 +69,10 @@ GPoint point_on_ray(GPoint centre, int32_t radius, int32_t angle);
 bool bounds_equal(GRect a, GRect b);
 void rebuild_geometry_cache(GRect bounds);
 void sort_rays(SectorRay *rays, size_t count);
+
+// Write at most seven clockwise vertices; return zero for an empty sector.
+uint32_t sector_polygon(GRect bounds, GPoint centre, int32_t start_angle,
+                        int32_t end_angle, GPoint points[7]);
 
 void update_canvas(Layer *layer, GContext *ctx);
 void release_render_resources(void);

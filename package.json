@@ -36,15 +36,38 @@
       "SHOW_DATE_TILES",
       "SHOW_DATE_COMPLICATION",
       "SHOW_HANDS",
-      "HAND_COLOUR"
+      "HAND_COLOUR",
+      "SHOW_TEXTURE"
     ],
     "resources": {
       "media": [
         {
-          "type": "font",
-          "name": "FONT_DIGITAL_LARGE_OPEN_84",
-          "file": "fonts/BebasNeue-Regular.ttf",
-          "characterRegex": "[0-9]"
+          "type": "bitmap",
+          "name": "DIGITS_SMALL_FILL",
+          "file": "images/digits_small_fill.png",
+          "memoryFormat": "2BitPalette",
+          "storageFormat": "pbi"
+        },
+        {
+          "type": "bitmap",
+          "name": "DIGITS_SMALL_OUTLINE",
+          "file": "images/digits_small_outline.png",
+          "memoryFormat": "2BitPalette",
+          "storageFormat": "pbi"
+        },
+        {
+          "type": "bitmap",
+          "name": "DIGITS_LARGE_FILL",
+          "file": "images/digits_large_fill.png",
+          "memoryFormat": "2BitPalette",
+          "storageFormat": "pbi"
+        },
+        {
+          "type": "bitmap",
+          "name": "DIGITS_LARGE_OUTLINE",
+          "file": "images/digits_large_outline.png",
+          "memoryFormat": "2BitPalette",
+          "storageFormat": "pbi"
         },
         {
           "type": "png",
@@ -57,5 +80,9 @@
     "capabilities": [
       "configurable"
     ]
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "generate:digits": "python3 tools/generate_digits.py"
   }
 }

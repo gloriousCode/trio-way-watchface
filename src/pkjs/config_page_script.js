@@ -281,19 +281,21 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
       function syncDateComplicationControl() {
         var mode = document.getElementById("faceMode").value;
         var toggle = document.getElementById("showDateComplication");
+        var tiles = document.getElementById("showDateTiles");
         var bg = document.getElementById("complicationBgColour");
         var border = document.getElementById("complicationBorderColour");
         var text = document.getElementById("complicationTextColour");
-        var supported = mode === "hands" || mode === "digital" || mode === "largedigital";
+        var supported = mode === "hands" || mode === "numbered" || mode === "ticks" || mode === "digital" || mode === "largedigital";
 
         if (!supported) {
           toggle.checked = false;
         }
 
         toggle.disabled = !supported;
-        bg.disabled = !supported || !toggle.checked;
-        border.disabled = !supported || !toggle.checked;
-        text.disabled = !supported || !toggle.checked;
+        var hasDate = toggle.checked || tiles.checked;
+        bg.disabled = !supported || !hasDate;
+        border.disabled = !supported || !hasDate;
+        text.disabled = !supported || !hasDate;
       }
 
       function syncHandControls() {
@@ -301,12 +303,12 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
         var showHands = document.getElementById("showHands");
         var hourHandColour = document.getElementById("hourHandColour");
         var minuteHandColour = document.getElementById("minuteHandColour");
-        var isAnalogue = mode === "hands";
-        var isLargeDigital = mode === "largedigital";
+        var isAnalogue = mode === "hands" || mode === "numbered" || mode === "ticks";
+        var hasNumerals = mode === "numbered" || mode === "digital" || mode === "largedigital";
 
         showHands.disabled = !isAnalogue;
-        hourHandColour.disabled = !isLargeDigital && (!isAnalogue || !showHands.checked);
-        minuteHandColour.disabled = !isLargeDigital && (!isAnalogue || !showHands.checked);
+        hourHandColour.disabled = !hasNumerals && (!isAnalogue || !showHands.checked);
+        minuteHandColour.disabled = !hasNumerals && (!isAnalogue || !showHands.checked);
       }
 
       addGroupedOptions("bgColour");
@@ -320,6 +322,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
 
       document.getElementById("faceMode").value = initial.faceMode;
       document.getElementById("showHands").checked = initial.showHands !== false;
+      document.getElementById("showTexture").checked = !!initial.showTexture;
       document.getElementById("showDateTiles").checked = !!initial.showDateTiles;
       document.getElementById("showDateComplication").checked = !!initial.showDateComplication;
       setColourSelectValue("bgColour", initial.bgColour, initial.bgColour);
@@ -354,6 +357,9 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
       document.getElementById("showDateComplication").addEventListener("change", function() {
         syncDateComplicationControl();
       });
+      document.getElementById("showDateTiles").addEventListener("change", function() {
+        syncDateComplicationControl();
+      });
 
       document.getElementById("cancel").addEventListener("click", function() {
         sendConfig(null, true);
@@ -363,6 +369,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
         sendConfig({
           faceMode: document.getElementById("faceMode").value,
           showHands: document.getElementById("showHands").checked,
+          showTexture: document.getElementById("showTexture").checked,
           showDateTiles: document.getElementById("showDateTiles").checked,
           showDateComplication: document.getElementById("showDateComplication").checked,
           bgColour: getColourSelectValue("bgColour", initial.bgColour),
@@ -380,6 +387,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
         sendConfig({
           faceMode: document.getElementById("faceMode").value,
           showHands: document.getElementById("showHands").checked,
+          showTexture: document.getElementById("showTexture").checked,
           showDateTiles: document.getElementById("showDateTiles").checked,
           showDateComplication: document.getElementById("showDateComplication").checked,
           bgColour: getColourSelectValue("bgColour", initial.bgColour),

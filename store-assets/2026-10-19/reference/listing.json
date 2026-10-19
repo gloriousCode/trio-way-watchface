@@ -1,0 +1,187 @@
+{
+  "data": [
+    {
+      "author": "gloriousCode",
+      "capabilities": [
+        "configurable"
+      ],
+      "category": "Faces",
+      "category_color": "ffffff",
+      "category_id": "528d3ef2dc7b5f580700000a",
+      "changelog": [
+        {
+          "version": "1.2",
+          "published_date": "2026-04-14T03:22:43.719",
+          "release_notes": "Gabbro support\r\nUpdated readme\r\nDefault to emerald watch face colours\r\nGifs on the store page!"
+        },
+        {
+          "version": "1.1",
+          "published_date": "2026-04-13T08:08:52.246",
+          "release_notes": ""
+        }
+      ],
+      "companions": {
+        "android": null,
+        "ios": null
+      },
+      "compatibility": {
+        "aplite": {
+          "supported": false,
+          "firmware": {
+            "major": 3
+          }
+        },
+        "basalt": {
+          "supported": false,
+          "firmware": {
+            "major": 3
+          }
+        },
+        "chalk": {
+          "supported": false,
+          "firmware": {
+            "major": 3
+          }
+        },
+        "diorite": {
+          "supported": false,
+          "firmware": {
+            "major": 3
+          }
+        },
+        "emery": {
+          "supported": true,
+          "firmware": {
+            "major": 3
+          }
+        },
+        "flint": {
+          "supported": false,
+          "firmware": {
+            "major": 3
+          }
+        },
+        "gabbro": {
+          "supported": true,
+          "firmware": {
+            "major": 3
+          }
+        },
+        "android": {
+          "supported": true
+        },
+        "ios": {
+          "supported": true,
+          "min_js_version": 1
+        }
+      },
+      "hardware_platforms": [
+        {
+          "sdk_version": "5.89",
+          "pebble_process_info_flags": 329,
+          "name": "emery",
+          "description": "A playful, retro-modern watch face that uses bold colour-blocked wedges, minimalist hands or numerals, and soft accent tones to make time feel both graphic and fun.\r\nPlenty of customisation!\r\n- Three display styles: analogue, digital-small, digital-large\r\n- Two complications\r\n- Heaps of preset colours!\r\n- Custom colour picker for your own themes!",
+          "images": {
+            "icon": "",
+            "list": "https://assets.repebble.com/icons/082418be8cd642a9b06da3ac/large/08ead916-a651-49a0-a08e-801314ffaa8e.gif",
+            "screenshot": "https://assets.repebble.com/screenshots/082418be8cd642a9b06da3ac/emery/3ce07511-3563-471f-81be-6c33b71835aa.gif"
+          }
+        },
+        {
+          "sdk_version": "5.89",
+          "pebble_process_info_flags": 457,
+          "name": "gabbro",
+          "description": "",
+          "images": {
+            "icon": "",
+            "list": "https://assets.repebble.com/icons/082418be8cd642a9b06da3ac/large/08ead916-a651-49a0-a08e-801314ffaa8e.gif",
+            "screenshot": "https://assets.repebble.com/screenshots/082418be8cd642a9b06da3ac/gabbro/9cbdc8b1-99dc-4903-9462-e404b2c83c5e.gif"
+          }
+        }
+      ],
+      "created_at": "2026-04-13T08:08:52.19",
+      "description": "A playful, retro-modern watch face that uses bold colour-blocked wedges, minimalist hands or numerals, and soft accent tones to make time feel both graphic and fun.\r\nPlenty of customisation!\r\n- Three display styles: analogue, digital-small, digital-large\r\n- Two complications\r\n- Heaps of preset colours!\r\n- Custom colour picker for your own themes!",
+      "developer_id": "11cfd2107e16a7ad902f758c",
+      "developer_claimed": true,
+      "contactable": true,
+      "header_images": [
+        {
+          "720x320": "https://assets.repebble.com/banners/082418be8cd642a9b06da3ac/emery/0d04dd6e-6079-4911-a535-58af3ce9a045.png",
+          "orig": "https://assets.repebble.com/banners/082418be8cd642a9b06da3ac/emery/0d04dd6e-6079-4911-a535-58af3ce9a045.png"
+        }
+      ],
+      "hearts": 34,
+      "icon_image": {
+        "28x28": "",
+        "48x48": ""
+      },
+      "id": "082418be8cd642a9b06da3ac",
+      "latest_release": {
+        "id": "75a65dbfdaaf489c9157185a",
+        "js_md5": null,
+        "js_version": -1,
+        "pbw_file": "https://appstore-api.repebble.com/api/assets/pbw/082418be8cd642a9b06da3ac/1.2/6912bf0b-e749-44b9-b998-4f5da439f490.pbw",
+        "published_date": "2026-04-14T03:22:43.719",
+        "release_notes": "Gabbro support\r\nUpdated readme\r\nDefault to emerald watch face colours\r\nGifs on the store page!",
+        "settings_page_state": "no_page",
+        "companion_android_state": "no_companion",
+        "companion_ios_state": "no_companion",
+        "version": "1.2"
+      },
+      "links": {
+        "add": "https://a",
+        "add_flag": "https://appstore-api.rebble.io/api/v0/applications/082418be8cd642a9b06da3ac/add_flag",
+        "add_heart": "https://appstore-api.repebble.com/api/v1/apps/id/082418be8cd642a9b06da3ac/heart",
+        "remove": "https://b",
+        "remove_flag": "https://appstore-api.rebble.io/api/v0/applications/082418be8cd642a9b06da3ac/remove_flag",
+        "remove_heart": "https://appstore-api.repebble.com/api/v1/apps/id/082418be8cd642a9b06da3ac/heart",
+        "share": "https://apps.rebble.io/application/082418be8cd642a9b06da3ac"
+      },
+      "list_image": {
+        "144x144": "https://assets.repebble.com/icons/082418be8cd642a9b06da3ac/large/08ead916-a651-49a0-a08e-801314ffaa8e.gif",
+        "80x80": ""
+      },
+      "published_date": null,
+      "screenshot_hardware": "emery",
+      "screenshot_images": [
+        {
+          "144x168": "https://assets.repebble.com/screenshots/082418be8cd642a9b06da3ac/emery/3ce07511-3563-471f-81be-6c33b71835aa.gif"
+        },
+        {
+          "144x168": "https://assets.repebble.com/screenshots/082418be8cd642a9b06da3ac/emery/e74fcdf8-4301-4d3e-be70-10a391781cd9.png"
+        },
+        {
+          "144x168": "https://assets.repebble.com/screenshots/082418be8cd642a9b06da3ac/emery/be0d8a21-257c-4427-894e-1920938c596a.png"
+        },
+        {
+          "144x168": "https://assets.repebble.com/screenshots/082418be8cd642a9b06da3ac/emery/0c88940d-331e-45b4-baa4-f950bd43bd96.png"
+        },
+        {
+          "144x168": "https://assets.repebble.com/screenshots/082418be8cd642a9b06da3ac/emery/300a7af9-cf09-4d67-b02c-e60bec5f644b.png"
+        },
+        {
+          "144x168": "https://assets.repebble.com/screenshots/082418be8cd642a9b06da3ac/emery/c4c8454b-72aa-4507-a3c2-4b8005faa28a.png"
+        },
+        {
+          "144x168": "https://assets.repebble.com/screenshots/082418be8cd642a9b06da3ac/emery/2eec58f0-2db7-4e58-8d93-15fe9674700e.png"
+        }
+      ],
+      "source": "https://github.com/gloriousCode/time-2-design",
+      "title": "TrioWay",
+      "type": "watchface",
+      "uuid": "a8f65773-d707-4ddc-afa4-57ef076a60e8",
+      "visible": true,
+      "website": null,
+      "icon_resource_id": 2,
+      "plugin": null,
+      "manifest_version": 1,
+      "uses_permissions": [],
+      "pebblekit2_packages": []
+    }
+  ],
+  "limit": 1,
+  "offset": 0,
+  "links": {
+    "nextPage": null
+  }
+}

@@ -96,5 +96,13 @@ FaceMode parse_mode(const char *text) {
     return FACE_MODE_LARGE_DIGITAL;
   }
 
+  if (strcmp(text, "numbered") == 0) {
+    return FACE_MODE_NUMBERED;
+  }
+
+  if (strcmp(text, "ticks") == 0) {
+    return FACE_MODE_TICKS;
+  }
+
   return FACE_MODE_HANDS;
 }

@@ -133,10 +133,12 @@ function buildConfigDataUrl(config, palette) {
       <label for="faceMode">Face mode</label>
       <select id="faceMode">
         <option value="hands">Analogue</option>
-        <option value="digital">Digital Small</option>
+        <option value="numbered">Analogue · Numerals</option>
+        <option value="ticks">Analogue · Marks</option>
+        <option value="digital">Hybrid</option>
         <option value="largedigital">Digital Large</option>
       </select>
-      <div class="help">Large Digital auto-hides day/date tiles.</div>
+      <div class="help">Analogue · Numerals adds a numbered dial. Analogue · Marks uses simple hour marks. Hybrid puts unboxed hour and minute numbers at the outer edge. Large Digital uses a fixed, stacked readout.</div>
     </div>
 
     <div class="row">
@@ -145,13 +147,18 @@ function buildConfigDataUrl(config, palette) {
     </div>
 
     <div class="row">
-      <label><input id="showDateTiles" type="checkbox" /> Show day/date tiles</label>
-      <div class="help">Hide this if you want a cleaner face.</div>
+      <label><input id="showTexture" type="checkbox" /> Subtle background texture</label>
+      <div class="help">Adds a light, static pattern behind the dial. Off by default.</div>
     </div>
 
     <div class="row">
-      <label><input id="showDateComplication" type="checkbox" /> Show date complication (3 o'clock)</label>
-      <div class="help">Available in Analogue, Digital Small, and Digital Large modes.</div>
+      <label><input id="showDateTiles" type="checkbox" /> Show weekday/date badge</label>
+      <div class="help">All Analogue modes and Hybrid use one compact weekday/date badge placed clear of the hands. Large Digital hides this badge.</div>
+    </div>
+
+    <div class="row">
+      <label><input id="showDateComplication" type="checkbox" /> Show date complication</label>
+      <div class="help">Analogue and Hybrid combine enabled date details into one badge clear of the hands. Large Digital keeps its date at 3 o'clock.</div>
     </div>
 
     <div class="row">
@@ -171,12 +178,12 @@ function buildConfigDataUrl(config, palette) {
     </div>
 
     <div class="row">
-      <label class="colour-label" for="hourHandColour">Hour hand colour <span class="swatch" id="hourHandSwatch"></span></label>
+      <label class="colour-label" for="hourHandColour">Hour hand / numeral colour <span class="swatch" id="hourHandSwatch"></span></label>
       <select id="hourHandColour"></select>
     </div>
 
     <div class="row">
-      <label class="colour-label" for="minuteHandColour">Minute hand colour <span class="swatch" id="minuteHandSwatch"></span></label>
+      <label class="colour-label" for="minuteHandColour">Minute hand / numeral colour <span class="swatch" id="minuteHandSwatch"></span></label>
       <select id="minuteHandColour"></select>
     </div>
 

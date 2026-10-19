@@ -2,15 +2,10 @@
 #include <string.h>
 
 #include "mdbl.h"
+#include "mdbl_settings.h"
 #include "message_keys.auto.h"
 
 AppState s_state;
-AppTimer *s_redraw_timer;
-GFont s_date_font;
-GFont s_day_font;
-GFont s_large_digital_font;
-int16_t s_date_font_height;
-int16_t s_day_font_height;
 
 void update_now(void) {
   time_t now_secs = time(NULL);
@@ -27,30 +22,30 @@ void init_state(void) {
 
   s_state.mode = FACE_MODE_HANDS;
   s_state.show_date_tiles = false;
-  s_state.bg_colour = GColorFromRGB(170, 255, 170);
-  s_state.hour_colour = GColorFromRGB(85, 170, 85);
-  s_state.minute_colour = GColorFromRGB(85, 85, 85);
-  s_state.hour_hand_colour = GColorFromRGB(85, 85, 170);
-  s_state.minute_hand_colour = GColorFromRGB(170, 85, 0);
-  s_state.complication_bg_colour = GColorWhite;
-  s_state.complication_border_colour = GColorFromRGB(85, 170, 85);
-  s_state.complication_text_colour = GColorFromRGB(85, 85, 85);
+  s_state.bg_colour = GColorFromRGB(85, 85, 85);
+  s_state.hour_colour = GColorBlack;
+  s_state.minute_colour = GColorFromRGB(170, 170, 170);
+  s_state.hour_hand_colour = GColorWhite;
+  s_state.minute_hand_colour = GColorFromRGB(255, 170, 85);
+  s_state.complication_bg_colour = GColorBlack;
+  s_state.complication_border_colour = GColorFromRGB(170, 170, 170);
+  s_state.complication_text_colour = GColorWhite;
   s_state.show_hands = true;
+  s_state.show_texture = false;
   s_state.show_date_complication = true;
   s_state.cache_ready = false;
 
+  load_settings(&s_state);
   apply_debug_state(&s_state);
 }
 
-static void redraw_timer_callback(void *context) {
-  (void)context;
-  update_now();
+static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+  (void)units_changed;
+  s_state.now = *tick_time;
+  apply_debug_state(&s_state);
   if (s_state.canvas) {
     layer_mark_dirty(s_state.canvas);
   }
-
-  const uint32_t millis_to_next_minute = (uint32_t)((60 - s_state.now.tm_sec) * 1000) + 50;
-  s_redraw_timer = app_timer_register(millis_to_next_minute, redraw_timer_callback, NULL);
 }
 
 static void inbox_received_handler(DictionaryIterator *iter, void *context) {
@@ -58,6 +53,7 @@ static void inbox_received_handler(DictionaryIterator *iter, void *context) {
   if (should_ignore_config_messages()) {
     return;
   }
+  const WatchSettings previous = capture_settings(&s_state);
 
   Tuple *bg = dict_find(iter, MESSAGE_KEY_BG_COLOUR);
   Tuple *hour = dict_find(iter, MESSAGE_KEY_HOUR_COLOUR);
@@ -71,6 +67,7 @@ static void inbox_received_handler(DictionaryIterator *iter, void *context) {
   Tuple *hour_hand_colour = dict_find(iter, MESSAGE_KEY_H_HAND_COLOUR);
   Tuple *minute_hand_colour = dict_find(iter, MESSAGE_KEY_M_HAND_COLOUR);
   Tuple *show_hands = dict_find(iter, MESSAGE_KEY_SHOW_HANDS);
+  Tuple *show_texture = dict_find(iter, MESSAGE_KEY_SHOW_TEXTURE);
   Tuple *hand_colour = dict_find(iter, MESSAGE_KEY_HAND_COLOUR);
 
   if (bg && bg->type == TUPLE_CSTRING) {
@@ -112,7 +109,8 @@ static void inbox_received_handler(DictionaryIterator *iter, void *context) {
     }
   }
 
-  if (date && s_state.mode != FACE_MODE_LARGE_DIGITAL) {
+  if (date && (date->type == TUPLE_INT || date->type == TUPLE_UINT) &&
+      s_state.mode != FACE_MODE_LARGE_DIGITAL) {
     s_state.show_date_tiles = date->value->int32 == 1;
   }
 
@@ -122,6 +120,10 @@ static void inbox_received_handler(DictionaryIterator *iter, void *context) {
 
   if (show_hands && (show_hands->type == TUPLE_INT || show_hands->type == TUPLE_UINT)) {
     s_state.show_hands = show_hands->value->int32 == 1;
+  }
+
+  if (show_texture && (show_texture->type == TUPLE_INT || show_texture->type == TUPLE_UINT)) {
+    s_state.show_texture = show_texture->value->int32 == 1;
   }
 
   if (hand_colour && (hand_colour->type == TUPLE_INT || hand_colour->type == TUPLE_UINT)) {
@@ -139,6 +141,13 @@ static void inbox_received_handler(DictionaryIterator *iter, void *context) {
     s_state.show_date_tiles = false;
   }
 
+  const WatchSettings current = capture_settings(&s_state);
+  if (settings_equal(&previous, &current)) {
+    return;
+  }
+  if (!save_settings(&current)) {
+    APP_LOG(APP_LOG_LEVEL_WARNING, "Could not persist watchface settings");
+  }
   update_now();
   if (s_state.canvas) {
     layer_mark_dirty(s_state.canvas);
@@ -162,12 +171,6 @@ static void window_unload(Window *window) {
 
 static void init(void) {
   init_state();
-  s_date_font = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
-  s_day_font = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
-  s_large_digital_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DIGITAL_LARGE_OPEN_84));
-  s_date_font_height = (int16_t)graphics_text_layout_get_content_size("8", s_date_font, GRect(0, 0, 40, 40), GTextOverflowModeWordWrap, GTextAlignmentCenter).h;
-  s_day_font_height = (int16_t)graphics_text_layout_get_content_size("W", s_day_font, GRect(0, 0, 40, 40), GTextOverflowModeWordWrap, GTextAlignmentCenter).h;
-
   s_state.window = window_create();
   window_set_background_color(s_state.window, GColorBlack);
   window_set_window_handlers(s_state.window, (WindowHandlers){
@@ -181,19 +184,11 @@ static void init(void) {
   if (s_state.canvas) {
     layer_mark_dirty(s_state.canvas);
   }
-  const uint32_t millis_to_next_minute = (uint32_t)((60 - s_state.now.tm_sec) * 1000) + 50;
-  s_redraw_timer = app_timer_register(millis_to_next_minute, redraw_timer_callback, NULL);
+  tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
 }
 
 static void deinit(void) {
-  if (s_redraw_timer) {
-    app_timer_cancel(s_redraw_timer);
-    s_redraw_timer = NULL;
-  }
-  if (s_large_digital_font) {
-    fonts_unload_custom_font(s_large_digital_font);
-    s_large_digital_font = NULL;
-  }
+  tick_timer_service_unsubscribe();
   release_render_resources();
   window_destroy(s_state.window);
 }

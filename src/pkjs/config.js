@@ -26,6 +26,7 @@ function buildDefaultConfig() {
     complicationBorderColour: defaults.complicationBorderColour,
     complicationTextColour: defaults.complicationTextColour,
     showHands: defaults.showHands,
+    showTexture: defaults.showTexture,
     showDateComplication: defaults.showDateComplication,
     faceMode: defaults.faceMode,
     showDateTiles: defaults.showDateTiles
@@ -50,6 +51,7 @@ function normaliseConfig(raw) {
     complicationBorderColour: sanitiseHex(raw && raw.complicationBorderColour, defaults.complicationBorderColour),
     complicationTextColour: sanitiseHex(raw && raw.complicationTextColour, defaults.complicationTextColour),
     showHands: sanitiseBool(raw && raw.showHands, defaults.showHands),
+    showTexture: sanitiseBool(raw && raw.showTexture, defaults.showTexture),
     showDateComplication: sanitiseBool(raw && raw.showDateComplication, defaults.showDateComplication),
     faceMode: sanitiseMode(raw && raw.faceMode, defaults.faceMode),
     showDateTiles: sanitiseBool(raw && raw.showDateTiles, defaults.showDateTiles)
@@ -143,7 +145,9 @@ function sanitiseMode(value, fallback) {
   if (
     mode === FACE_MODES.HANDS ||
     mode === FACE_MODES.DIGITAL ||
-    mode === FACE_MODES.LARGE_DIGITAL
+    mode === FACE_MODES.LARGE_DIGITAL ||
+    mode === FACE_MODES.NUMBERED ||
+    mode === FACE_MODES.TICKS
   ) {
     return mode;
   }
@@ -190,6 +194,7 @@ function buildConfigPayload(config) {
     C_BORDER_COLOUR: config.complicationBorderColour,
     C_TEXT_COLOUR: config.complicationTextColour,
     SHOW_HANDS: config.showHands ? 1 : 0,
+    SHOW_TEXTURE: config.showTexture ? 1 : 0,
     SHOW_DATE_COMPLICATION: config.showDateComplication ? 1 : 0,
     FACE_MODE: config.faceMode,
     SHOW_DATE_TILES: config.showDateTiles ? 1 : 0
@@ -201,6 +206,10 @@ function retryDelayForAttempt(attempt) {
 }
 
 function sendPayloadWithRetry(payload, sendToken, attempt) {
+  // An older retry may still be queued after a newer configuration was sent.
+  if (sendToken !== activeSendToken) {
+    return;
+  }
   Pebble.sendAppMessage(
     payload,
     function() {
