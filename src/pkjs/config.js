@@ -27,6 +27,7 @@ function buildDefaultConfig() {
     complicationTextColour: defaults.complicationTextColour,
     showHands: defaults.showHands,
     showTexture: defaults.showTexture,
+    twelveHour: defaults.twelveHour,
     showDateComplication: defaults.showDateComplication,
     faceMode: defaults.faceMode,
     showDateTiles: defaults.showDateTiles
@@ -52,6 +53,7 @@ function normaliseConfig(raw) {
     complicationTextColour: sanitiseHex(raw && raw.complicationTextColour, defaults.complicationTextColour),
     showHands: sanitiseBool(raw && raw.showHands, defaults.showHands),
     showTexture: sanitiseBool(raw && raw.showTexture, defaults.showTexture),
+    twelveHour: sanitiseBool(raw && raw.twelveHour, defaults.twelveHour),
     showDateComplication: sanitiseBool(raw && raw.showDateComplication, defaults.showDateComplication),
     faceMode: sanitiseMode(raw && raw.faceMode, defaults.faceMode),
     showDateTiles: sanitiseBool(raw && raw.showDateTiles, defaults.showDateTiles)
@@ -195,6 +197,7 @@ function buildConfigPayload(config) {
     C_TEXT_COLOUR: config.complicationTextColour,
     SHOW_HANDS: config.showHands ? 1 : 0,
     SHOW_TEXTURE: config.showTexture ? 1 : 0,
+    TWELVE_HOUR: config.twelveHour ? 1 : 0,
     SHOW_DATE_COMPLICATION: config.showDateComplication ? 1 : 0,
     FACE_MODE: config.faceMode,
     SHOW_DATE_TILES: config.showDateTiles ? 1 : 0

@@ -113,7 +113,7 @@ static void draw_centre_cap(GContext *ctx, GPoint centre) {
 
 static void draw_digital(GContext *ctx, GRect bounds) {
   static char time_text[5];
-  strftime(time_text, sizeof(time_text), "%H%M", &s_state.now);
+  strftime(time_text, sizeof(time_text), s_state.twelve_hour ? "%I%M" : "%H%M", &s_state.now);
 
   const int16_t tile_width = bounds.size.w * 19 / 100;
   const int16_t tile_height = bounds.size.h * 16 / 100;
@@ -171,7 +171,7 @@ static void draw_text_with_outline(
 static void draw_large_digital(GContext *ctx, GRect bounds) {
   char hh[3];
   char mm[3];
-  strftime(hh, sizeof(hh), "%H", &s_state.now);
+  strftime(hh, sizeof(hh), s_state.twelve_hour ? "%I" : "%H", &s_state.now);
   strftime(mm, sizeof(mm), "%M", &s_state.now);
 
   const GRect top_text = GRect(0, 0, bounds.size.w, bounds.size.h * 49 / 100);
@@ -269,7 +269,7 @@ void update_canvas(Layer *layer, GContext *ctx) {
       s_state.show_date_complication ? GSize(side, side) : GSize(0, 0);
     HybridLayout layout;
     if (draw_hybrid(ctx, bounds, centre, s_state.cached_min_dimension, hour, minute,
-                    &s_state.now, s_state.hour_hand_colour, s_state.minute_hand_colour,
+                    &s_state.now, s_state.twelve_hour, s_state.hour_hand_colour, s_state.minute_hand_colour,
                     date_size, &layout)) {
       if (layout.has_date_space) {
         draw_date_badge(ctx, layout.date_badge, s_state.show_date_tiles);

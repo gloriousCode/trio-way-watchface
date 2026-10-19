@@ -4,6 +4,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
       var groupedPalette = ${paletteJson};
       var groupOrder = ${groupOrderJson};
       var initial = ${initialConfig};
+      var weekdayPreference = !!initial.showDateTiles;
 
       function getReturnToUrl() {
         var value = null;
@@ -79,7 +80,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
 
         if (!closeAfter) {
           if (postReturnTo(encoded)) {
-            status.textContent = "Applied to emulator.";
+            status.textContent = "Sent to emulator. Save & close when finished.";
           } else {
             status.textContent = "Live apply unavailable here. Use Save.";
           }
@@ -107,7 +108,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
           for (var j = 0; j < options.length; j += 1) {
             var option = document.createElement("option");
             option.value = options[j].colour;
-            option.textContent = options[j].colour.toUpperCase();
+            option.textContent = groupName + " · " + options[j].colour.toUpperCase();
             option.style.backgroundColor = options[j].colour;
             option.style.color = getContrastText(options[j].colour);
             option.style.fontWeight = "700";
@@ -201,18 +202,19 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
         setColourSelectValue("complicationTextColour", preset.complicationTextColour || preset.hourColour, initial.complicationTextColour);
       }
 
-      function findMatchingPresetKey(colours) {
+      function findMatchingPresetKey() {
         for (var key in presets) {
           if (!Object.prototype.hasOwnProperty.call(presets, key)) {
             continue;
           }
 
           var preset = presets[key];
-          if (
-            toPaletteColour(preset.bgColour, colours.bgColour) === colours.bgColour &&
-            toPaletteColour(preset.hourColour, colours.hourColour) === colours.hourColour &&
-            toPaletteColour(preset.minuteColour, colours.minuteColour) === colours.minuteColour
-          ) {
+          var fields = ["bgColour", "hourColour", "minuteColour", "hourHandColour", "minuteHandColour",
+            "complicationBgColour", "complicationBorderColour", "complicationTextColour"];
+          var matches = fields.every(function(field) {
+            return toPaletteColour(preset[field], initial[field]) === document.getElementById(field).value;
+          });
+          if (matches) {
             return key;
           }
         }
@@ -271,9 +273,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
         var dateToggle = document.getElementById("showDateTiles");
         var largeDigital = mode === "largedigital";
 
-        if (largeDigital) {
-          dateToggle.checked = false;
-        }
+        dateToggle.checked = largeDigital ? false : weekdayPreference;
 
         dateToggle.disabled = largeDigital;
       }
@@ -307,9 +307,33 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
         var hasNumerals = mode === "numbered" || mode === "digital" || mode === "largedigital";
 
         showHands.disabled = !isAnalogue;
+        document.getElementById("handsHelp").textContent = mode === "digital"
+          ? "Hybrid always uses hands to point to the hour and minute labels."
+          : (mode === "largedigital" ? "Digital Large uses numbers without hands." : "Show or hide hands on this analogue dial.");
+        document.getElementById("twelveHour").disabled = isAnalogue;
+        syncClockHelp();
         hourHandColour.disabled = !hasNumerals && (!isAnalogue || !showHands.checked);
         minuteHandColour.disabled = !hasNumerals && (!isAnalogue || !showHands.checked);
       }
+
+      function syncClockHelp() {
+        var control = document.getElementById("twelveHour");
+        document.getElementById("clockHelp").textContent = control.disabled
+          ? "Choose Hybrid or Digital Large to use this setting. Analogue dials remain 1–12."
+          : (control.checked ? "12-hour: 01:37. Midnight and noon show 12:00. No AM/PM label."
+                             : "24-hour: 13:37. Midnight shows 00:00.");
+      }
+
+      var returnTo = getReturnToUrl();
+      document.getElementById("apply").style.display = returnTo && /^https?:/.test(returnTo) ? "" : "none";
+      document.getElementById("twelveHour").addEventListener("change", syncClockHelp);
+      ["faceMode", "preset", "twelveHour", "showHands", "showTexture", "showDateTiles", "showDateComplication",
+       "bgColour", "hourColour", "minuteColour", "hourHandColour", "minuteHandColour",
+       "complicationBgColour", "complicationBorderColour", "complicationTextColour"].forEach(function(id) {
+        document.getElementById(id).addEventListener("change", function() {
+          document.getElementById("status").textContent = "Unsaved changes — tap Save & close when ready.";
+        });
+      });
 
       addGroupedOptions("bgColour");
       addGroupedOptions("hourColour");
@@ -323,6 +347,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
       document.getElementById("faceMode").value = initial.faceMode;
       document.getElementById("showHands").checked = initial.showHands !== false;
       document.getElementById("showTexture").checked = !!initial.showTexture;
+      document.getElementById("twelveHour").checked = !!initial.twelveHour;
       document.getElementById("showDateTiles").checked = !!initial.showDateTiles;
       document.getElementById("showDateComplication").checked = !!initial.showDateComplication;
       setColourSelectValue("bgColour", initial.bgColour, initial.bgColour);
@@ -333,11 +358,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
       setColourSelectValue("complicationBgColour", initial.complicationBgColour, initial.bgColour);
       setColourSelectValue("complicationBorderColour", initial.complicationBorderColour, initial.minuteColour);
       setColourSelectValue("complicationTextColour", initial.complicationTextColour, initial.hourColour);
-      document.getElementById("preset").value = findMatchingPresetKey({
-        bgColour: getColourSelectValue("bgColour", initial.bgColour),
-        hourColour: getColourSelectValue("hourColour", initial.hourColour),
-        minuteColour: getColourSelectValue("minuteColour", initial.minuteColour)
-      });
+      document.getElementById("preset").value = findMatchingPresetKey();
 
       document.getElementById("preset").addEventListener("change", function(event) {
         applyPreset(event.target.value);
@@ -358,6 +379,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
         syncDateComplicationControl();
       });
       document.getElementById("showDateTiles").addEventListener("change", function() {
+        weekdayPreference = document.getElementById("showDateTiles").checked;
         syncDateComplicationControl();
       });
 
@@ -370,6 +392,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
           faceMode: document.getElementById("faceMode").value,
           showHands: document.getElementById("showHands").checked,
           showTexture: document.getElementById("showTexture").checked,
+          twelveHour: document.getElementById("twelveHour").checked,
           showDateTiles: document.getElementById("showDateTiles").checked,
           showDateComplication: document.getElementById("showDateComplication").checked,
           bgColour: getColourSelectValue("bgColour", initial.bgColour),
@@ -388,6 +411,7 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
           faceMode: document.getElementById("faceMode").value,
           showHands: document.getElementById("showHands").checked,
           showTexture: document.getElementById("showTexture").checked,
+          twelveHour: document.getElementById("twelveHour").checked,
           showDateTiles: document.getElementById("showDateTiles").checked,
           showDateComplication: document.getElementById("showDateComplication").checked,
           bgColour: getColourSelectValue("bgColour", initial.bgColour),
@@ -401,37 +425,13 @@ function buildConfigPageScript(presetJson, paletteJson, groupOrderJson, initialC
         }, true);
       });
 
-      document.getElementById("bgColour").addEventListener("change", syncSwatches);
-      document.getElementById("hourColour").addEventListener("change", syncSwatches);
-      document.getElementById("minuteColour").addEventListener("change", syncSwatches);
-      document.getElementById("hourHandColour").addEventListener("change", syncSwatches);
-      document.getElementById("minuteHandColour").addEventListener("change", syncSwatches);
-      document.getElementById("complicationBgColour").addEventListener("change", syncSwatches);
-      document.getElementById("complicationBorderColour").addEventListener("change", syncSwatches);
-      document.getElementById("complicationTextColour").addEventListener("change", syncSwatches);
-      document.getElementById("bgColour").addEventListener("change", function() {
-        document.getElementById("preset").value = "";
-        syncPresetPreview();
-      });
-      document.getElementById("hourColour").addEventListener("change", function() {
-        document.getElementById("preset").value = "";
-        syncPresetPreview();
-      });
-      document.getElementById("minuteColour").addEventListener("change", function() {
-        document.getElementById("preset").value = "";
-        syncPresetPreview();
-      });
-      document.getElementById("complicationBgColour").addEventListener("change", function() {
-        document.getElementById("preset").value = "";
-        syncPresetPreview();
-      });
-      document.getElementById("complicationBorderColour").addEventListener("change", function() {
-        document.getElementById("preset").value = "";
-        syncPresetPreview();
-      });
-      document.getElementById("complicationTextColour").addEventListener("change", function() {
-        document.getElementById("preset").value = "";
-        syncPresetPreview();
+      ["bgColour", "hourColour", "minuteColour", "hourHandColour", "minuteHandColour",
+       "complicationBgColour", "complicationBorderColour", "complicationTextColour"].forEach(function(id) {
+        document.getElementById(id).addEventListener("change", function() {
+          document.getElementById("preset").value = findMatchingPresetKey();
+          syncSwatches();
+          syncPresetPreview();
+        });
       });
 
       syncDateTileControl();

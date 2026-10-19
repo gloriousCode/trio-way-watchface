@@ -8,7 +8,8 @@
 #define SETTINGS_HANDS 2
 #define SETTINGS_DATE_COMPLICATION 4
 #define SETTINGS_TEXTURE 8
-#define SETTINGS_FLAGS 15
+#define SETTINGS_TWELVE_HOUR 16
+#define SETTINGS_FLAGS 31
 
 WatchSettings capture_settings(const AppState *state) {
   return (WatchSettings){
@@ -17,7 +18,8 @@ WatchSettings capture_settings(const AppState *state) {
     .flags = (state->show_date_tiles ? SETTINGS_DATE_TILES : 0) |
              (state->show_hands ? SETTINGS_HANDS : 0) |
              (state->show_date_complication ? SETTINGS_DATE_COMPLICATION : 0) |
-             (state->show_texture ? SETTINGS_TEXTURE : 0),
+             (state->show_texture ? SETTINGS_TEXTURE : 0) |
+             (state->twelve_hour ? SETTINGS_TWELVE_HOUR : 0),
     .colours = {
       state->bg_colour.argb, state->hour_colour.argb, state->minute_colour.argb,
       state->hour_hand_colour.argb, state->minute_hand_colour.argb,
@@ -51,6 +53,7 @@ bool load_settings(AppState *state) {
   state->show_hands = (settings.flags & SETTINGS_HANDS) != 0;
   state->show_date_complication = (settings.flags & SETTINGS_DATE_COMPLICATION) != 0;
   state->show_texture = (settings.flags & SETTINGS_TEXTURE) != 0;
+  state->twelve_hour = (settings.flags & SETTINGS_TWELVE_HOUR) != 0;
   state->bg_colour.argb = settings.colours[0];
   state->hour_colour.argb = settings.colours[1];
   state->minute_colour.argb = settings.colours[2];

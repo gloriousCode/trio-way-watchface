@@ -43,6 +43,7 @@ typedef struct AppState {
   GColor complication_text_colour;
   bool show_hands;
   bool show_texture;
+  bool twelve_hour;
   bool show_date_complication;
   struct tm now;
   GRect cached_bounds;

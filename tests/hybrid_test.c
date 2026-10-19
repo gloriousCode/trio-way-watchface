@@ -169,37 +169,40 @@ static void test_invalid_bounds(void) {
 }
 
 static void test_hour_and_minute_values(void) {
-  const int times[][2] = {{13,37}, {0,0}, {23,59}, {10,10}};
-  for (size_t i = 0; i < ARRAY_LENGTH(times); i++) {
-    const struct tm now = {.tm_hour = times[i][0], .tm_min = times[i][1]};
-    const int angles[] = {(now.tm_hour % 12) * TRIG_MAX_ANGLE / 12 + now.tm_min * TRIG_MAX_ANGLE / 720,
-                          now.tm_min * TRIG_MAX_ANGLE / 60};
-    HybridLayout layout;
-    s_digit_calls = s_line_calls = s_fill_calls = 0;
-    const GPoint centre = GPoint(100,114);
-    assert(draw_hybrid(NULL,GRect(0,0,200,228),centre,200,angles[0],angles[1],
-                       &now,GColorWhite,GColorBlack,GSize(34,34),&layout));
-    char hh[3], mm[3];
-    strftime(hh, sizeof(hh), "%H", &now);
-    strftime(mm, sizeof(mm), "%M", &now);
-    assert(layout.has_date_space && s_fill_calls == 0);
-    assert(s_digit_calls == 2 && strcmp(s_values[0],hh) == 0 && strcmp(s_values[1],mm) == 0);
-    assert(s_line_calls == 4);
-    for (int hand = 0; hand < 2; hand++) {
-      bool on_ray = false;
-      for (int radius = 1; radius <= (hand ? 84 : 48); radius++) {
-        const GPoint expected = point_on_ray(centre, radius, angles[hand]);
-        if (expected.x == s_hand_ends[hand].x && expected.y == s_hand_ends[hand].y) on_ray = true;
-      }
-      assert(on_ray);
-      assert(s_hand_ends[hand].x == s_hand_ends[hand + 2].x &&
-             s_hand_ends[hand].y == s_hand_ends[hand + 2].y);
-      const GRect labels[] = {layout.hour_badge, layout.minute_badge};
-      for (size_t label = 0; label < ARRAY_LENGTH(labels); label++) {
-        assert(s_hand_ends[hand].x < labels[label].origin.x - 5 ||
-               s_hand_ends[hand].x >= labels[label].origin.x + labels[label].size.w + 5 ||
-               s_hand_ends[hand].y < labels[label].origin.y - 5 ||
-               s_hand_ends[hand].y >= labels[label].origin.y + labels[label].size.h + 5);
+  const int times[][2] = {{13,37}, {0,0}, {23,59}, {10,10}, {12,0}, {11,59}, {0,1}};
+  for (unsigned format = 0; format < 2; format++) {
+    for (size_t i = 0; i < ARRAY_LENGTH(times); i++) {
+      const struct tm now = {.tm_hour = times[i][0], .tm_min = times[i][1]};
+      const int angles[] = {(now.tm_hour % 12) * TRIG_MAX_ANGLE / 12 + now.tm_min * TRIG_MAX_ANGLE / 720,
+                            now.tm_min * TRIG_MAX_ANGLE / 60};
+      HybridLayout layout;
+      s_digit_calls = s_line_calls = s_fill_calls = 0;
+      const GPoint centre = GPoint(100,114);
+      assert(draw_hybrid(NULL,GRect(0,0,200,228),centre,200,angles[0],angles[1],
+                         &now,format != 0,GColorWhite,GColorBlack,GSize(34,34),&layout));
+      char hh[3], mm[3];
+      const unsigned displayed_hour = format ? (now.tm_hour % 12 ? now.tm_hour % 12 : 12) : now.tm_hour;
+      snprintf(hh, sizeof(hh), "%02u", displayed_hour);
+      strftime(mm, sizeof(mm), "%M", &now);
+      assert(layout.has_date_space && s_fill_calls == 0);
+      assert(s_digit_calls == 2 && strcmp(s_values[0],hh) == 0 && strcmp(s_values[1],mm) == 0);
+      assert(s_line_calls == 4);
+      for (int hand = 0; hand < 2; hand++) {
+        bool on_ray = false;
+        for (int radius = 1; radius <= (hand ? 84 : 48); radius++) {
+          const GPoint expected = point_on_ray(centre, radius, angles[hand]);
+          if (expected.x == s_hand_ends[hand].x && expected.y == s_hand_ends[hand].y) on_ray = true;
+        }
+        assert(on_ray);
+        assert(s_hand_ends[hand].x == s_hand_ends[hand + 2].x &&
+               s_hand_ends[hand].y == s_hand_ends[hand + 2].y);
+        const GRect labels[] = {layout.hour_badge, layout.minute_badge};
+        for (size_t label = 0; label < ARRAY_LENGTH(labels); label++) {
+          assert(s_hand_ends[hand].x < labels[label].origin.x - 5 ||
+                 s_hand_ends[hand].x >= labels[label].origin.x + labels[label].size.w + 5 ||
+                 s_hand_ends[hand].y < labels[label].origin.y - 5 ||
+                 s_hand_ends[hand].y >= labels[label].origin.y + labels[label].size.h + 5);
+        }
       }
     }
   }

@@ -32,6 +32,7 @@ void init_state(void) {
   s_state.complication_text_colour = GColorWhite;
   s_state.show_hands = true;
   s_state.show_texture = false;
+  s_state.twelve_hour = false;
   s_state.show_date_complication = true;
   s_state.cache_ready = false;
 
@@ -68,6 +69,7 @@ static void inbox_received_handler(DictionaryIterator *iter, void *context) {
   Tuple *minute_hand_colour = dict_find(iter, MESSAGE_KEY_M_HAND_COLOUR);
   Tuple *show_hands = dict_find(iter, MESSAGE_KEY_SHOW_HANDS);
   Tuple *show_texture = dict_find(iter, MESSAGE_KEY_SHOW_TEXTURE);
+  Tuple *twelve_hour = dict_find(iter, MESSAGE_KEY_TWELVE_HOUR);
   Tuple *hand_colour = dict_find(iter, MESSAGE_KEY_HAND_COLOUR);
 
   if (bg && bg->type == TUPLE_CSTRING) {
@@ -124,6 +126,10 @@ static void inbox_received_handler(DictionaryIterator *iter, void *context) {
 
   if (show_texture && (show_texture->type == TUPLE_INT || show_texture->type == TUPLE_UINT)) {
     s_state.show_texture = show_texture->value->int32 == 1;
+  }
+
+  if (twelve_hour && (twelve_hour->type == TUPLE_INT || twelve_hour->type == TUPLE_UINT)) {
+    s_state.twelve_hour = twelve_hour->value->int32 == 1;
   }
 
   if (hand_colour && (hand_colour->type == TUPLE_INT || hand_colour->type == TUPLE_UINT)) {

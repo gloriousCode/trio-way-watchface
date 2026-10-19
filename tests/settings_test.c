@@ -66,13 +66,14 @@ static AppState sample_state(void) {
 
 static void test_roundtrip(void) {
   for (unsigned mode = FACE_MODE_HANDS; mode <= FACE_MODE_TICKS; mode++) {
-    for (unsigned flags = 0; flags < 16; flags++) {
+    for (unsigned flags = 0; flags < 32; flags++) {
       AppState source = sample_state();
       source.mode = (FaceMode)mode;
       source.show_date_tiles = (flags & 1) != 0;
       source.show_hands = (flags & 2) != 0;
       source.show_date_complication = (flags & 4) != 0;
       source.show_texture = (flags & 8) != 0;
+      source.twelve_hour = (flags & 16) != 0;
       WatchSettings settings = capture_settings(&source);
       assert(settings.version == 1);
       assert(settings.mode == mode);
@@ -98,6 +99,7 @@ static void test_roundtrip(void) {
       assert(target.cached_radius == 170);
       assert(target.cache_ready);
       assert(target.show_texture == ((flags & 8) != 0));
+      assert(target.twelve_hour == ((flags & 16) != 0));
       assert(s_read_count == 1);
       assert(s_write_count == 1); // Restoring settings does not write flash.
       s_cases++;
@@ -142,7 +144,7 @@ static void test_invalid_storage(void) {
   reset_storage(valid);
   s_stored.mode = 255;
   assert_rejected_unchanged();
-  for (unsigned bit = 4; bit < 8; bit++) {
+  for (unsigned bit = 5; bit < 8; bit++) {
     reset_storage(valid);
     s_stored.flags |= (uint8_t)(1u << bit);
     assert_rejected_unchanged();
@@ -176,6 +178,20 @@ static void test_legacy_texture_default(void) {
   assert((without_texture.flags ^ with_texture.flags) == 8);
   assert(!settings_equal(&without_texture, &with_texture));
   assert(with_texture.version == without_texture.version);
+}
+
+static void test_legacy_clock_default(void) {
+  const AppState source = sample_state();
+  for (unsigned flags = 0; flags < 16; flags++) {
+    reset_storage(capture_settings(&source));
+    s_stored.flags = flags;
+    AppState target = sample_state();
+    target.twelve_hour = true;
+    assert(load_settings(&target));
+    assert(!target.twelve_hour);
+    assert(s_write_count == 0);
+    s_cases++;
+  }
 }
 
 static void test_settings_comparison(void) {
@@ -213,6 +229,7 @@ int main(void) {
   assert(FACE_MODE_TICKS == 4);
   test_roundtrip();
   test_legacy_texture_default();
+  test_legacy_clock_default();
   test_invalid_storage();
   test_settings_comparison();
   test_write_errors();

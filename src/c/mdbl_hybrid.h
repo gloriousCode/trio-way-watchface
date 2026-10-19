@@ -16,7 +16,7 @@ bool calculate_hybrid_layout(GRect bounds, int32_t hour, int32_t minute,
 
 // Draw two analogue hands with their corresponding upright digital values.
 bool draw_hybrid(GContext *ctx, GRect bounds, GPoint centre, int16_t min_dimension,
-                 int32_t hour, int32_t minute, const struct tm *now,
+                 int32_t hour, int32_t minute, const struct tm *now, bool twelve_hour,
                  GColor hour_colour, GColor minute_colour, GSize date_size,
                  HybridLayout *layout);
 

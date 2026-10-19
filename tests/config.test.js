@@ -135,5 +135,22 @@ test('texture message key is appended without renumbering existing settings', ()
   const { pebble } = require('../package.json');
   assert.deepEqual(pebble.messageKeys, ['BG_COLOUR', 'HOUR_COLOUR', 'MINUTE_COLOUR',
     'H_HAND_COLOUR', 'M_HAND_COLOUR', 'C_BG_COLOUR', 'C_BORDER_COLOUR', 'C_TEXT_COLOUR',
-    'FACE_MODE', 'SHOW_DATE_TILES', 'SHOW_DATE_COMPLICATION', 'SHOW_HANDS', 'HAND_COLOUR', 'SHOW_TEXTURE']);
+    'FACE_MODE', 'SHOW_DATE_TILES', 'SHOW_DATE_COMPLICATION', 'SHOW_HANDS', 'HAND_COLOUR', 'SHOW_TEXTURE', 'TWELVE_HOUR']);
+});
+
+
+test('12-hour preference defaults off and survives storage and watch messages', () => {
+  for (const faceMode of ['digital', 'largedigital']) {
+    for (const [value, expected] of [[undefined, false], [null, false], ['invalid', false],
+      [true, true], [false, false], [1, true], [0, false], ['1', true], ['0', false]]) {
+      const harness = createConfigHarness();
+      const config = harness.config.normaliseConfig({ faceMode, twelveHour: value });
+      assert.equal(config.twelveHour, expected);
+      harness.config.saveConfig(config);
+      assert.equal(harness.config.loadConfig().twelveHour, expected);
+      harness.config.sendConfigToWatch(config);
+      assert.equal(harness.sent[0].payload.TWELVE_HOUR, expected ? 1 : 0);
+    }
+  }
+  assert.equal(createConfigHarness().config.loadConfig().twelveHour, false);
 });

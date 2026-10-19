@@ -167,6 +167,7 @@ const defaults = {
   complicationTextColour: PRESETS.classic.complicationTextColour,
   showHands: true,
   showTexture: false,
+  twelveHour: false,
   showDateComplication: true,
   faceMode: FACE_MODES.HANDS,
   showDateTiles: false

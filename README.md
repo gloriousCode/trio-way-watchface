@@ -109,3 +109,15 @@ The old repository paths are ignored to prevent accidentally adding screenshots
 again. When applying this cleanup to an existing clone, commit the tracked asset
 removals as well as these tool changes: ignore rules alone do not remove files
 already tracked by Git.
+
+## Clock format
+
+In watchface settings, enable **Use 12-hour time** for Hybrid and Digital Large.
+Leave it off for 24-hour time (the default). In 12-hour mode, 13:37 displays as
+01:37 and midnight/noon as 12:00; no AM/PM label is added. The preference survives
+restarts and does not change analogue hand positions or numbered dials.
+
+Settings are grouped into Time & layout, Date, and Colours & finish. Expand
+**Customise individual colours** to edit sectors, hands/numerals and date colours.
+**Save & close** sends your choices; Cancel leaves unapplied edits behind.
+Live Apply is shown only when an emulator callback is available.

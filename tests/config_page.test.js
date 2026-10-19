@@ -230,3 +230,66 @@ test('Apply and Save both send explicit texture toggles in every face mode', () 
     }
   }
 });
+
+
+test('12-hour control persists through presets and both Apply and Save', () => {
+  assert.equal(openPage().get('twelveHour').checked, false);
+  for (const faceMode of ['digital', 'largedigital']) {
+    const page = openPage({ faceMode, twelveHour: true }, 'http://localhost:8080/config');
+    assert.equal(page.get('twelveHour').checked, true);
+    for (const enabled of [false, true, false]) {
+      page.change('twelveHour', enabled);
+      page.change('preset', 'classic');
+      page.get('apply').dispatch('click');
+      const applied = JSON.parse(new URL(page.callbacks.at(-1)).searchParams.get('response'));
+      assert.equal(applied.twelveHour, enabled);
+      page.get('save').dispatch('click');
+      const saved = JSON.parse(decodeURIComponent(page.document.location.split('#')[1]));
+      assert.equal(saved.twelveHour, enabled);
+    }
+  }
+});
+
+
+test('phone settings hide emulator-only Apply and explain clock availability', () => {
+  const page = openPage({ faceMode: 'digital', twelveHour: true });
+  assert.equal(page.get('apply').style.display, 'none');
+  assert.equal(page.get('twelveHour').disabled, false);
+  assert.match(page.get('clockHelp').textContent, /01:37/);
+  page.change('faceMode', 'hands');
+  assert.equal(page.get('twelveHour').disabled, true);
+  assert.equal(page.get('twelveHour').checked, true);
+  assert.match(page.get('clockHelp').textContent, /Choose Hybrid or Digital Large/);
+  page.change('faceMode', 'largedigital');
+  assert.equal(page.get('twelveHour').disabled, false);
+  assert.equal(page.get('twelveHour').checked, true);
+  assert.match(page.get('status').textContent, /Unsaved changes/);
+  assert.equal(openPage({}, 'http://localhost:8080/config').get('apply').style.display, '');
+});
+
+test('switching layouts restores weekday preference without sending it to Large Digital', () => {
+  const page = openPage({ faceMode: 'digital', showDateTiles: true });
+  page.change('faceMode', 'largedigital');
+  page.get('save').dispatch('click');
+  assert.equal(JSON.parse(decodeURIComponent(page.document.location.split('#')[1])).showDateTiles, false);
+  page.change('faceMode', 'digital');
+  assert.equal(page.get('showDateTiles').checked, true);
+  page.change('showDateTiles', false);
+  page.change('faceMode', 'largedigital');
+  page.change('faceMode', 'digital');
+  assert.equal(page.get('showDateTiles').checked, false);
+});
+
+test('preset labels reflect all eight colours, including custom hands and date colours', () => {
+  const { PRESETS } = require('../src/pkjs/constants');
+  const page = openPage({ ...PRESETS.classic });
+  assert.equal(page.get('preset').value, 'classic');
+  for (const field of ['hourHandColour', 'minuteHandColour', 'complicationTextColour']) {
+    page.change(field, '#55aaff');
+    assert.equal(page.get('preset').value, '');
+    assert.equal(page.get('presetPreviewLabel').textContent, 'Custom');
+    page.change(field, PRESETS.classic[field]);
+    assert.equal(page.get('preset').value, 'classic');
+  }
+  assert.equal(openPage({ ...PRESETS.classic, hourHandColour: '#55aaff' }).get('preset').value, '');
+});

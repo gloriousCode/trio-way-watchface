@@ -150,7 +150,7 @@ GPoint dial_hand_end(GPoint centre, int16_t length, int32_t angle, const GRect *
 }
 
 bool draw_hybrid(GContext *ctx, GRect bounds, GPoint centre, int16_t min_dimension,
-                 int32_t hour, int32_t minute, const struct tm *now,
+                 int32_t hour, int32_t minute, const struct tm *now, bool twelve_hour,
                  GColor hour_colour, GColor minute_colour, GSize date_size,
                  HybridLayout *layout) {
 #if defined(PBL_PLATFORM_GABBRO)
@@ -179,7 +179,7 @@ bool draw_hybrid(GContext *ctx, GRect bounds, GPoint centre, int16_t min_dimensi
   graphics_draw_line(ctx, centre, minute_end);
   char hh[3];
   char mm[3];
-  strftime(hh, sizeof(hh), "%H", now);
+  strftime(hh, sizeof(hh), twelve_hour ? "%I" : "%H", now);
   strftime(mm, sizeof(mm), "%M", now);
   digits_set_style(DIGIT_STYLE_SMALL);
   draw_dial_label(ctx, layout->hour_badge, hh, hour_colour);
